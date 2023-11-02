@@ -1,23 +1,13 @@
 const express = require('express')
-let aprendices = [
-    {
-        "documento":111,
-        "nombre": "Juanito ",
-        "apellido": "AlimaÑa"
-    },
 
-    {
-        "documento":222,
-        "nombre": "Rasputin",
-        "apellido": "Builes"
-    },
-]
 class Server {
 
     constructor(){
         this.app = express()
         this.port = process.env.PORT
+        this.app.aprendizPath = '/api/aprendiz' //Ruta de la API
         this.routes()
+        
     }
 
     listen(){
@@ -28,36 +18,10 @@ class Server {
         )
     }
 
-    routes(){
-        this.app.get('/', (req, res) =>{
-            res.json({
-                msg: aprendices
-            })
-        })
-
-        //Consultar aprendiz
-        this.app.get('/consultarAprendiz', (req, res) =>{
-            const {documento, nombre} = req.query //Recibir parametros
-            let resultado = ''
-            //Buscar si el documento recibido existe en el array de 'aprendices'
-            resultado = aprendices.find(aprendiz => aprendiz.documento === parseInt(documento))
-            res.json({
-                msg: resultado
-            })
-        })
-
-        // Metodo para agregar datos
-        this.app.post('/', (req, res) => {
-            const {documento, nombre, apellido} = req.query
-            aprendices.push({
-                "documento": parseInt(documento),
-                "nombre": nombre,
-                "apellido": apellido
-            }) 
-            res.json({
-                msg: aprendices
-            })
-        })
+        routes(){
+            this.app.use(this.app.aprendizPath, require('../routes/aprendiz'))
+        }
+    
 
                 // // Metodo para agregar datos
                 // this.app.delete('/eliminaraprendiz', (req, res) => {
@@ -70,6 +34,6 @@ class Server {
                 // })
 
     }
-}
+
 
 module.exports = {Server} //Exportacion de la clase
